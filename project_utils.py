@@ -1,8 +1,30 @@
 import numpy as np
-from Model.CIFAR_model_utils import load_cifar_data
+from keras.datasets import cifar10
+from keras.utils import np_utils
+
 from Model.CIFAR_model_utils import choose_defense_model as choose_cifar
 from Model.MNIST_model_utils import load_mnist_data
 from Model.MNIST_model_utils import choose_defense_model as choose_mnist
+
+
+def load_cifar_data(one_hot=True, scale1=True):
+    (X_train, Y_train), (X_test, Y_test) = cifar10.load_data()
+
+    if one_hot:
+        Y_train = np_utils.to_categorical(Y_train, 10)
+        Y_test = np_utils.to_categorical(Y_test, 10)
+    else:
+        Y_train = np.reshape(Y_train, (Y_train.shape[0],))
+        Y_test = np.reshape(Y_test, (Y_test.shape[0],))
+
+
+    if scale1:
+        X_train = X_train.astype('float32')
+        X_test = X_test.astype('float32')
+        X_train /= 255
+        X_test /= 255
+
+    return X_train, X_test, Y_train, Y_test
 
 
 def test_acc(indicator, weights=None, dataset='CIFAR'):

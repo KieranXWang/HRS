@@ -8,10 +8,11 @@ from keras.layers import Dense, Dropout, Activation, Flatten, InputLayer, Reshap
 from keras.optimizers import SGD
 
 from project_utils import get_data, get_dimensions
+from keras_utils import construct_model_by_blocks
 
 # CIFAR data and information
 [X_train, X_test, Y_train, Y_test] = get_data(dataset='CIFAR', scale1=True, one_hot=True)
-img_rows, img_cols, channels = get_dimensions('CIFAR')
+img_rows, img_cols, img_channels = get_dimensions('CIFAR')
 
 
 # FLAGS
@@ -21,7 +22,7 @@ nb_block = len(STRUCTURE)
 # block definitions
 def block_0():
     block = Sequential()
-    block.add(Conv2D(64, (3, 3), input_shape=(img_rows, img_cols, channels)))
+    block.add(Conv2D(64, (3, 3), input_shape=(img_rows, img_cols, img_channels)))
     block.add(Activation('relu'))
     block.add(Conv2D(64, (3, 3)))
     block.add(Activation('relu'))
@@ -40,7 +41,7 @@ def block_0():
 
 def block_1():
     channel = Sequential()
-    channel.add(Dense(256, input_shape=256))
+    channel.add(Dense(256, input_shape=(256,)))
     channel.add(Activation('relu'))
     channel.add(Dense(10))
 
@@ -50,23 +51,25 @@ block_definitions = [block_0, block_1]
 
 # start the training process
 trained_blocks = None
+
 # crete all channels
 HRS_channels = []
-for block_idx in nb_block:
+for block_idx in range(nb_block):
     block_channels = []
-    for channel_idx in STRUCTURE[block_idx]:
+    for channel_idx in range(STRUCTURE[block_idx]):
         channel = block_definitions[block_idx]()
         block_channels.append(channel)
-    HRS_channels
+    HRS_channels.append(block_channels)
 
 for train_block_idx in range(nb_block):
     for channel_idx in range(STRUCTURE[train_block_idx]):
         if trained_blocks is None:
-            Input = InputLayer(input_shape=(img_rows, img_cols, channels))
-            block = block_definitions[train_block_idx]()
-            following_blocks =
-            for block_definition in block_definitions[train_block_idx:]:
-                block
+            Input = InputLayer(input_shape=(img_rows, img_cols, img_channels))
+            model_structure_list = [Input] + [channels[channel_idx] for channels in HRS_channels]
+            model = construct_model_by_blocks(model_structure_list)
+
+            print('debug')
+
 
 
 
