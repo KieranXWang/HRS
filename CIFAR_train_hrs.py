@@ -19,7 +19,7 @@ block definition
 # block definitions
 def block_0():
     block = Sequential()
-    block.add(Conv2D(64, (3, 3), input_shape=(img_rows, img_cols, img_channels)))
+    block.add(Conv2D(64, (3, 3), input_shape=(32, 32, 3)))
     block.add(Activation('relu'))
     block.add(Conv2D(64, (3, 3)))
     block.add(Activation('relu'))
@@ -55,9 +55,9 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
     nb_block = len(STRUCTURE)
 
     # create weights save dir
-    SAVE_DIR = './Model/CIFAR_models/' + MODEL_INDICATOR + '/'
+    SAVE_DIR = './Model/%s_models/' % DATASET + MODEL_INDICATOR + '/'
     try:
-        os.makedirs('./Model/CIFAR_models/' + MODEL_INDICATOR + '/')
+        os.makedirs('./Model/%s_models/' % DATASET + MODEL_INDICATOR + '/')
     except: pass
 
     # dataset and input dimensions
@@ -84,7 +84,7 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
             trained_blocks = [model_input]
         else:
             model_input = InputLayer(input_shape=(img_rows, img_cols, img_channels))
-            swiching_blocks = construct_switching_blocks(indicator=MODEL_INDICATOR, structure=STRUCTURE[:block_idx],
+            swiching_blocks = construct_switching_blocks(dataset=DATASET, indicator=MODEL_INDICATOR, structure=STRUCTURE[:block_idx],
                                                          blocks_definition=blocks_definition[:block_idx])
 
 
