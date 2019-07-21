@@ -1,2 +1,3 @@
-# Hierarchical Random Switching
+Hierarchical Random Switching
+====================================
 
