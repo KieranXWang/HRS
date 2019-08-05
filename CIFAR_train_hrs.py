@@ -18,23 +18,23 @@ block definition
 '''
 # block definitions
 def block_0():
-    block = Sequential()
-    block.add(Conv2D(64, (3, 3), input_shape=(32, 32, 3)))
-    block.add(Activation('relu'))
-    block.add(Conv2D(64, (3, 3)))
-    block.add(Activation('relu'))
-    block.add(MaxPooling2D(pool_size=(2, 2)))
-    block.add(Conv2D(128, (3, 3)))
-    block.add(Activation('relu'))
-    block.add(Conv2D(128, (3, 3)))
-    block.add(Activation('relu'))
-    block.add(MaxPooling2D(pool_size=(2, 2)))
-    block.add(Flatten())
-    block.add(Dense(256))
-    block.add(Activation('relu'))
-    block.add(Dropout(0.7))
+    channel = Sequential()
+    channel.add(Conv2D(64, (3, 3), input_shape=(32, 32, 3)))
+    channel.add(Activation('relu'))
+    channel.add(Conv2D(64, (3, 3)))
+    channel.add(Activation('relu'))
+    channel.add(MaxPooling2D(pool_size=(2, 2)))
+    channel.add(Conv2D(128, (3, 3)))
+    channel.add(Activation('relu'))
+    channel.add(Conv2D(128, (3, 3)))
+    channel.add(Activation('relu'))
+    channel.add(MaxPooling2D(pool_size=(2, 2)))
+    channel.add(Flatten())
+    channel.add(Dense(256))
+    channel.add(Activation('relu'))
+    channel.add(Dropout(0.7))
 
-    return block
+    return channel
 
 
 def block_1():
@@ -78,10 +78,13 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
     for block_idx in range(nb_block):
         print("start training the %d\'s block" % block_idx)
 
-        # construct switching blocks up to the (block_idx - 1)'s blocks
+        # construct the trained part:
+        # switching blocks up to the (block_idx - 1)'s block
         if block_idx == 0:
             model_input = InputLayer(input_shape=(img_rows, img_cols, img_channels))
-            trained_blocks = [model_input]
+            # note: for InputLayer the input and output tensors are the same one.
+            trained_blocks = model_input
+
         else:
             model_input = InputLayer(input_shape=(img_rows, img_cols, img_channels))
             swiching_blocks = construct_switching_blocks(dataset=DATASET, indicator=MODEL_INDICATOR, structure=STRUCTURE[:block_idx],
@@ -89,6 +92,7 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
 
 
             trained_blocks = None
+
         # for each channel to train, construct the following blocks
         for channel_idx in range(STRUCTURE[block_idx]):
             following_blocks = [blocks_definition[b]() for b in [block_idx, nb_block]]
@@ -149,8 +153,6 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
 
 
 
-                print('debug')
-
         # after training all channels in this block, reset tf graph
         K.clear_session()
 
@@ -168,12 +170,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_indicator', default='test_hrs[5][5]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
-    parser.add_argument('--train_schedule', default='2 2', help='number of epochs for training each block', type=int)
+    parser.add_argument('--train_schedule', default=[2, 2], help='number of epochs for training each block', type=int,
+                        nargs='*')
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')
 
     args = parser.parse_args()
-    MODEL_INDICATOR, TRAIN_SCHEDULE, DATA_SET = args[0], args[1], args[2]
-    train_hrs(MODEL_INDICATOR, TRAIN_SCHEDULE, DATASET=DATA_SET)
+    train_hrs(MODEL_INDICATOR=args.model_indicator,
+              TRAINING_EPOCH=args.train_schedule)
     pass
 
 
