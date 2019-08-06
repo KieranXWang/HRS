@@ -4,6 +4,7 @@ from keras.models import Model, Sequential
 from keras.layers import InputLayer
 
 from project_utils import get_dimensions
+from Model.CIFAR_model_utils import RandomMask
 
 
 def construct_model_by_blocks(block_list):
@@ -49,4 +50,21 @@ def construct_switching_blocks(dataset, indicator, structure, blocks_definition,
             channel = blocks_definition[i]()
 
 
+def construct_switching_block(input, nb_channels, channel_definition, weights, freeze_channel=True):
+
+    channel_output_list = []
+    for channel_idx in range(nb_channels):
+        channel = channel_definition()
+        channel_output = channel(input)
+        channel_output_list.append(channel_output)
+        # load weights
+        if weights:
+            channel.load_weights(weights % channel_idx)
+        if freeze_channel:
+            for layer in channel:
+                layer.trainable = False
+
+    # using a random mask to mask inactive channels
+    block_output = RandomMask(nb_channels)(channel_output_list)
+    return block_output
 

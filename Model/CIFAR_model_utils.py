@@ -417,6 +417,41 @@ class Mask_Layer(Layer):
     def compute_output_shape(self, input_shape):
         return(input_shape[0], input_shape[2])
 
+
+class RandomMask(Layer):
+    def __init__(self, nb_channels, **kwargs):
+        self.nb_channels = nb_channels
+        self.mask = None
+        super().__init__(**kwargs)
+
+    def build(self, input_shape):
+        # the input_shape here should be a list
+        assert isinstance(input_shape, list), "the input shape of RandomMask layer should be a list"
+        shape = input_shape[0]
+
+        # build the random mask
+        if self.nb_channels == 1:
+            self.mask = tf.ones((1, ) + shape[2:])
+        else:
+            ones = tf.ones((1, ) + shape[2:])
+            zeros = tf.zeros((self.nb_channels - 1, ) + shape[2: ])
+            mask = tf.concat([ones, zeros], 0)
+            self.mask = tf.random_shuffle(mask)
+
+    def call(self, x):
+        # x should be a list
+        assert isinstance(x, list), "the input of RandomMask layer should be a list"
+        xs_expand = [tf.expand_dim(x_orig, axis=1) for x_orig in x]
+
+        x = x * self.mask
+        x = tf.reduce_sum(x, axis=1)
+        return x
+
+    def compute_output_shape(self, input_shape):
+        shape = input_shape[0]
+        return shape
+
+
 # define sap layer
 class sap_dense(Layer):
 
