@@ -102,13 +102,12 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
             # the channel to train
             channel_to_train = blocks_definition[block_idx]()
             block_output = channel_to_train(block_input)
+            block_input = block_output
             # add following blocks in any
             for j in range(block_idx+1, nb_block):
                 channel = blocks_definition[j]()
                 block_output = channel(block_input)
                 block_input = block_output
-
-                pass
 
             # construct the model object
             model = Model(input=model_input.input, output=block_output)
@@ -126,9 +125,9 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_indicator', default='test_hrs[5][5]', help='model indicator, format: model_name[5][5] for'
+    parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
-    parser.add_argument('--train_schedule', default=[2, 2], help='number of epochs for training each block', type=int,
+    parser.add_argument('--train_schedule', default=[40, 40], help='number of epochs for training each block', type=int,
                         nargs='*')
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')
 
