@@ -61,7 +61,7 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
     except: pass
 
     # dataset and input dimensions
-    [X_train, X_test, Y_train, Y_test] = get_data(dataset=DATASET, scale1=True, one_hot=True, percentage=0.05)
+    [X_train, X_test, Y_train, Y_test] = get_data(dataset=DATASET, scale1=True, one_hot=True, percentage=0.01)
     img_rows, img_cols, img_channels = get_dimensions(DATASET)
 
 
@@ -91,7 +91,8 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
             # build switching blocks
             block_input = model_input.output
             for i in range(block_idx):
-                block_output = construct_switching_block(block_input, STRUCTURE[i], blocks_definition[i])
+                weight_dir = SAVE_DIR + '%d_' % i + '%d'
+                block_output = construct_switching_block(block_input, STRUCTURE[i], blocks_definition[i], weight_dir)
                 block_input = block_output
             trained_blocks_output = block_output
 
@@ -125,9 +126,9 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
+    parser.add_argument('--model_indicator', default='test_hrs[3][3]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
-    parser.add_argument('--train_schedule', default=[40, 40], help='number of epochs for training each block', type=int,
+    parser.add_argument('--train_schedule', default=[2, 2], help='number of epochs for training each block', type=int,
                         nargs='*')
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')
 

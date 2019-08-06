@@ -431,18 +431,19 @@ class RandomMask(Layer):
 
         # build the random mask
         if self.nb_channels == 1:
-            self.mask = tf.ones((1, ) + shape[2:])
+            self.mask = tf.ones((1, ) + shape[1:])
         else:
-            ones = tf.ones((1, ) + shape[2:])
-            zeros = tf.zeros((self.nb_channels - 1, ) + shape[2: ])
+            ones = tf.ones((1, ) + shape[1:])
+            zeros = tf.zeros((self.nb_channels - 1, ) + shape[1:])
             mask = tf.concat([ones, zeros], 0)
             self.mask = tf.random_shuffle(mask)
+            pass
 
     def call(self, x):
         # x should be a list
         assert isinstance(x, list), "the input of RandomMask layer should be a list"
-        xs_expand = [tf.expand_dim(x_orig, axis=1) for x_orig in x]
-
+        xs_expand = [tf.expand_dims(x_orig, axis=1) for x_orig in x]
+        x = tf.concat(xs_expand, 1)
         x = x * self.mask
         x = tf.reduce_sum(x, axis=1)
         return x

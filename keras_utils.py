@@ -61,7 +61,7 @@ def construct_switching_block(input, nb_channels, channel_definition, weights, f
         if weights:
             channel.load_weights(weights % channel_idx)
         if freeze_channel:
-            for layer in channel:
+            for layer in channel.layers:
                 layer.trainable = False
 
     # using a random mask to mask inactive channels
