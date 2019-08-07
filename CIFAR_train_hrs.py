@@ -61,7 +61,7 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
     except: pass
 
     # dataset and input dimensions
-    [X_train, X_test, Y_train, Y_test] = get_data(dataset=DATASET, scale1=True, one_hot=True, percentage=0.01)
+    [X_train, X_test, Y_train, Y_test] = get_data(dataset=DATASET, scale1=True, one_hot=True, percentage=1)
     img_rows, img_cols, img_channels = get_dimensions(DATASET)
 
 
@@ -69,8 +69,6 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
     def fn(correct, predicted):
         return tf.nn.softmax_cross_entropy_with_logits(labels=correct, logits=predicted)
 
-    # optimizer
-    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 
     '''
     Training HRS
@@ -112,6 +110,8 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
 
             # construct the model object
             model = Model(input=model_input.input, output=block_output)
+            # optimizer
+            sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
             # training
             model.compile(loss=fn, optimizer=sgd, metrics=['accuracy'])
             model.fit(X_train, Y_train, batch_size=128, validation_data=(X_test, Y_test),
@@ -126,9 +126,9 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_indicator', default='test_hrs[3][3]', help='model indicator, format: model_name[5][5] for'
+    parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
-    parser.add_argument('--train_schedule', default=[2, 2], help='number of epochs for training each block', type=int,
+    parser.add_argument('--train_schedule', default=[40, 40], help='number of epochs for training each block', type=int,
                         nargs='*')
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')
 
