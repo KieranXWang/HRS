@@ -10,7 +10,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten, InputLayer, Reshap
 from keras.optimizers import SGD
 
 from project_utils import get_data, get_dimensions
-from keras_utils import construct_model_by_blocks, construct_switching_blocks, construct_switching_block
+from keras_utils import construct_switching_block
 
 
 '''
@@ -134,7 +134,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     train_hrs(MODEL_INDICATOR=args.model_indicator,
-              TRAINING_EPOCH=args.train_schedule)
+              TRAINING_EPOCH=args.train_schedule,
+              DATASET=args.dataset)
     pass
 
 

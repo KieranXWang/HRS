@@ -24,30 +24,30 @@ def construct_model_by_blocks(block_list):
     return model
 
 
-def construct_switching_blocks(dataset, indicator, structure, blocks_definition, load_weights=True):
-    '''
-    Note: structure can be different from indicator, indicator will only be used to load weights (if load_weights ==
-    True). This is so designed because this function may be used to construct the switching part of HRS model under
-    training.
-    '''
-
-    # assert nb blocks
-    assert len(structure) == len(blocks_definition), 'arg structure and block_definition need to have the same length'
-    nb_block = len(structure)
-
-    # assert weights exist
-    weights_dir = './Model/%s_Models/%s' % (dataset, indicator)
-    assert os.path.exists(weights_dir), '%s does not exist' % weights_dir
-
-    # input
-    img_rows, img_cols, img_channels = get_dimensions(dataset)
-    model_input = InputLayer(input_shape=(img_rows, img_cols, img_channels))
-
-    # loop over blocks
-    block_input = model_input
-    for i in range(nb_block):
-        for j in range(structure[i]):
-            channel = blocks_definition[i]()
+# def construct_switching_blocks(dataset, indicator, structure, blocks_definition, load_weights=True):
+#     '''
+#     Note: structure can be different from indicator, indicator will only be used to load weights (if load_weights ==
+#     True). This is so designed because this function may be used to construct the switching part of HRS model under
+#     training.
+#     '''
+#
+#     # assert nb blocks
+#     assert len(structure) == len(blocks_definition), 'arg structure and block_definition need to have the same length'
+#     nb_block = len(structure)
+#
+#     # assert weights exist
+#     weights_dir = './Model/%s_Models/%s' % (dataset, indicator)
+#     assert os.path.exists(weights_dir), '%s does not exist' % weights_dir
+#
+#     # input
+#     img_rows, img_cols, img_channels = get_dimensions(dataset)
+#     model_input = InputLayer(input_shape=(img_rows, img_cols, img_channels))
+#
+#     # loop over blocks
+#     block_input = model_input
+#     for i in range(nb_block):
+#         for j in range(structure[i]):
+#             channel = blocks_definition[i]()
 
 
 def construct_switching_block(input, nb_channels, channel_definition, weights, freeze_channel=True):
@@ -67,4 +67,35 @@ def construct_switching_block(input, nb_channels, channel_definition, weights, f
     # using a random mask to mask inactive channels
     block_output = RandomMask(nb_channels)(channel_output_list)
     return block_output
+
+
+def construct_hrs_model(dataset, model_indicator, blocks_definition, load_weights=True):
+    # get structure from model_indicator
+    structure = [int(ss[:-1]) for ss in model_indicator.split('[')[1:]]
+    nb_block = len(structure)
+
+    # assert nb blocks
+    assert len(structure) == len(blocks_definition), 'arg structure and block_definition need to have the same length'
+
+    # assert weights exist
+    weights_dir = './Model/%s_Models/%s' % (dataset, model_indicator)
+    assert os.path.exists(weights_dir), '%s does not exist' % weights_dir
+
+    # input
+    img_rows, img_cols, img_channels = get_dimensions(dataset)
+    model_input = InputLayer(input_shape=(img_rows, img_cols, img_channels))
+    save_dir = './Model/%s_models/' % dataset + model_indicator + '/'
+
+    # loop over block
+    block_input = model_input.output
+    for i in range(nb_block):
+        weight_dir = save_dir + '%d_' % i + '%d'
+        block_output = construct_switching_block(input=block_input, nb_channels=structure[i],
+                                                 channel_definition=blocks_definition[i], weights=weight_dir)
+        block_input = block_output
+
+    # construct Model object
+    model = Model(input=model_input.input, output=block_output)
+
+    return model
 
