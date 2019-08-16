@@ -5,64 +5,37 @@ import keras
 import keras.backend as K
 import argparse
 
-from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Activation, Flatten, InputLayer, Reshape, Conv2D, MaxPooling2D, concatenate
+from keras.models import Model
+from keras.layers import InputLayer
 from keras.optimizers import SGD
 
 from project_utils import get_data, get_dimensions
 from keras_utils import construct_switching_block
+from block_split_config import get_split
 
 
-'''
-block definition
-'''
-# block definitions
-def block_0():
-    channel = Sequential()
-    channel.add(Conv2D(64, (3, 3), input_shape=(32, 32, 3)))
-    channel.add(Activation('relu'))
-    channel.add(Conv2D(64, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(MaxPooling2D(pool_size=(2, 2)))
-    channel.add(Conv2D(128, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(Conv2D(128, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(MaxPooling2D(pool_size=(2, 2)))
-    channel.add(Flatten())
-    channel.add(Dense(256))
-    channel.add(Activation('relu'))
-    channel.add(Dropout(0.7))
+def train_hrs(model_indicator, training_epoch, split='default', dataset='CIFAR'):
+    # get block definitions
+    blocks_definition = get_split(split, dataset)
 
-    return channel
-
-
-def block_1():
-    channel = Sequential()
-    channel.add(Dense(256, input_shape=(256,)))
-    channel.add(Activation('relu'))
-    channel.add(Dense(10))
-
-    return channel
-
-
-generate_blocks = [block_0, block_1]
-
-
-def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks, DATASET='CIFAR'):
     # parse structure
-    STRUCTURE = [int(ss[:-1]) for ss in MODEL_INDICATOR.split('[')[1:]]
+    STRUCTURE = [int(ss[:-1]) for ss in model_indicator.split('[')[1:]]
     nb_block = len(STRUCTURE)
 
+    # make sure model_indicator, training_epoch and split all have the same number of blocks
+    assert nb_block == len(training_epoch) == len(blocks_definition), "The number of blocks indicated by " \
+                                                                      "model_indicator, training_epoch and split must " \
+                                                                      "be the same!"
+
     # create weights save dir
-    SAVE_DIR = './Model/%s_models/' % DATASET + MODEL_INDICATOR + '/'
+    SAVE_DIR = './Model/%s_models/' % dataset + model_indicator + '/'
     try:
-        os.makedirs('./Model/%s_models/' % DATASET + MODEL_INDICATOR + '/')
+        os.makedirs('./Model/%s_models/' % dataset + model_indicator + '/')
     except: pass
 
     # dataset and input dimensions
-    [X_train, X_test, Y_train, Y_test] = get_data(dataset=DATASET, scale1=True, one_hot=True, percentage=1)
-    img_rows, img_cols, img_channels = get_dimensions(DATASET)
+    [X_train, X_test, Y_train, Y_test] = get_data(dataset=dataset, scale1=True, one_hot=True, percentage=1)
+    img_rows, img_cols, img_channels = get_dimensions(dataset)
 
 
     # loss definition
@@ -115,7 +88,7 @@ def train_hrs(MODEL_INDICATOR, TRAINING_EPOCH, blocks_definition=generate_blocks
             # training
             model.compile(loss=fn, optimizer=sgd, metrics=['accuracy'])
             model.fit(X_train, Y_train, batch_size=128, validation_data=(X_test, Y_test),
-                      nb_epoch=TRAINING_EPOCH[block_idx], shuffle=True)
+                      nb_epoch=training_epoch[block_idx], shuffle=True)
 
             # save weights of this channel
             channel_to_train.save_weights(SAVE_DIR + '%d_%d' % (block_idx, channel_idx))
@@ -128,14 +101,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
+    parser.add_argument('--split', default='default', help='the structures of channels in each block')
     parser.add_argument('--train_schedule', default=[40, 40], help='number of epochs for training each block', type=int,
                         nargs='*')
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')
 
     args = parser.parse_args()
-    train_hrs(MODEL_INDICATOR=args.model_indicator,
-              TRAINING_EPOCH=args.train_schedule,
-              DATASET=args.dataset)
+    train_hrs(model_indicator=args.model_indicator,
+              training_epoch=args.train_schedule,
+              dataset=args.dataset,
+              split=args.split)
     pass
 
 

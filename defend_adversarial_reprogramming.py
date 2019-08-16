@@ -95,14 +95,14 @@ def defend_adversarial_reprogramming(model_indicator, epochs):
     train_acc = hist.history['acc']
     test_acc = hist.history['val_acc']
 
-    np.save('hist.npy', np.array(hist.history))
+    np.save(save_dir + 'hist.npy', np.array(hist.history))
     print('Perform adversarial reprogramming to model %s' % model_indicator)
     print('Reprogramming Train Acc. after %d epochs of training is %.4f' % (epochs, train_acc[-1]))
     print('Reprogramming Test Acc. after %d epochs of training is %.4f' % (epochs, test_acc[-1]))
 
 
 if __name__ == '__main__':
-    parser =argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
     parser.add_argument('--epochs', default=1, help='the number of epochs to train (reprogram).')
