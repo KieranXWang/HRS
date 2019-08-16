@@ -108,7 +108,6 @@ def defend_adversarial_attack(dataset, model_indicator, attack, epsilon, test_sa
     print('Average distortion = %.2f' % mean_distortion)
 
 
-
 if __name__ == '__main__':
     parser =argparse.ArgumentParser()
     parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
