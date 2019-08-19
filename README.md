@@ -19,19 +19,19 @@ appendices of the paper is .
 If you have any questions, feel free to contact Xiao Wang by email kxw@bu.edu.
 
 
-##Set Up
+## Set Up
 This code requires `python 3` and the following packages: `tensorflow`,
 `keras`, `numpy`.
 
 This code is tested with .
 
 
-##Train HRS
+## Train HRS
 
 
-##Compute Test Accuracy
+## Compute Test Accuracy
 
-##Defense against Adversarial Attack
+## Defense against Adversarial Attack
 
-##Defense against Adversarial Reprogramming
+## Defense against Adversarial Reprogramming
 
