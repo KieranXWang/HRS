@@ -6,7 +6,7 @@ order to protect the model from adversarial threats such as adversarial
 (mis-classification) attack and adversarial reprogramming. The
 figure below illustrates the structure of a HRS model.
 
-
+![](https://github.com/KieranXWang/HRS/blob/master/Figures/ijcai_hrs.pdf)
 
 In the inference phase, the active channel that processes the input of
 each block is randomly assigned and ever-switching, leading to drastic but
