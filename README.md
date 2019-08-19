@@ -43,7 +43,7 @@ and the output layer are grouped as the second block.
 Outputs:
 Trained weights of each channel will be saved in `./Model/`.
 
-### Customize Model Structure and Block Splitting
+#### Customize Model Structure and Block Splitting
 This can be done by adding options in `block_split_config.py` with unique indicators. Note that `get_split` needs to
 return a list of functions that return Keras `Sequential` models for each block.
 
