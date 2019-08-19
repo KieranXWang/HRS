@@ -5,50 +5,15 @@ import tensorflow as tf
 import numpy as np
 
 from keras.models import Sequential, Model
-from keras.layers import ZeroPadding2D, LocallyConnected2D, Activation, Conv2D, MaxPooling2D, Dense, Flatten, Dropout
+from keras.layers import ZeroPadding2D, LocallyConnected2D, Activation
 from keras.optimizers import SGD
 
 from project_utils import get_data
 from keras_utils import construct_hrs_model
+from block_split_config import get_split
 
 
-'''
-block definition
-'''
-# block definitions
-def block_0():
-    channel = Sequential()
-    channel.add(Conv2D(64, (3, 3), input_shape=(32, 32, 3)))
-    channel.add(Activation('relu'))
-    channel.add(Conv2D(64, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(MaxPooling2D(pool_size=(2, 2)))
-    channel.add(Conv2D(128, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(Conv2D(128, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(MaxPooling2D(pool_size=(2, 2)))
-    channel.add(Flatten())
-    channel.add(Dense(256))
-    channel.add(Activation('relu'))
-    channel.add(Dropout(0.7))
-
-    return channel
-
-
-def block_1():
-    channel = Sequential()
-    channel.add(Dense(256, input_shape=(256,)))
-    channel.add(Activation('relu'))
-    channel.add(Dense(10))
-
-    return channel
-
-
-generate_blocks = [block_0, block_1]
-
-
-def defend_adversarial_reprogramming(model_indicator, epochs):
+def defend_adversarial_reprogramming(model_indicator, split, epochs):
     save_dir = './Adversarial_Reprogramming/' + args.model_indicator + '/'
     try: os.makedirs(save_dir)
     except: pass
@@ -62,9 +27,12 @@ def defend_adversarial_reprogramming(model_indicator, epochs):
     input_transfer.add(LocallyConnected2D(3, (3, 3), activation='relu'))
     input_transfer.add(Activation('tanh'))
 
+    # get block definitions
+    blocks_definition = get_split(split, 'CIFAR')
+
     # target model to reprogram
     keras.backend.set_learning_phase(0)
-    model = construct_hrs_model(dataset='CIFAR', model_indicator=model_indicator, blocks_definition=generate_blocks)
+    model = construct_hrs_model(dataset='CIFAR', model_indicator=model_indicator, blocks_definition=blocks_definition)
     # set layer untrainable
     for layer in model.layers:
         layer.trainable = False
@@ -105,10 +73,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
-    parser.add_argument('--epochs', default=1, help='the number of epochs to train (reprogram).')
+    parser.add_argument('--split', default='default', help='the indicator of channel structures in each block')
+    parser.add_argument('--epochs', default=50, help='the number of epochs to train (reprogram).')
 
     args = parser.parse_args()
     defend_adversarial_reprogramming(model_indicator=args.model_indicator,
+                                     split=args.split,
                                      epochs=args.epochs)
 
 

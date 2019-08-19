@@ -65,12 +65,11 @@ different results.
 `python defense_adversarial_attack.py [options]`
 
 Options:
-* `--model_indicator`: the indicator of the trained model (which is specified in training).
-Default: `test_hrs[10][10]`.
+* `--model_indicator`: the indicator of the trained model (which is specified in training). Default: `test_hrs[10][10]`.
 * `--split`: the indicator of channel structures in each block. Default: `default`.
 * `--dataset`: CIFAR or MNIST. Default: `CIFAR`.
-* `--test_examples`: number of test examples. Default:`10`.
-* `--attack`: FGSM, PGD or CWPGD. Default:`CWPGD`.
+* `--test_examples`: number of test examples. Default: `10`.
+* `--attack`: FGSM, PGD or CWPGD. Default: `CWPGD`.
 * `--epsilon`: the L_inf bound of allowed adversarial perturbations. Default: `8/255`.
 * `--num_steps`: number of steps in generating adversarial examples, not work for FGSM. Default: `100`.
 * `--step_size`: the step size in generating adversarial examples. Default: `0.1`.
@@ -81,4 +80,19 @@ Outputs:
 Attack success rate (ASR) and averaged distortion will be printed.
 
 ## Defense against Adversarial Reprogramming
+In this experiment we reprogram a trained CIFAR-10 classifier to do MNIST
+classification by training input and output transformations. The input transformation
+is performed by a locally-connected layer and the output transformation is
+an identical mapping. The reprogramming test accuracy indicates the defense
+capability against adversarial reprogramming: the lower the better.
+
+`python defense_adversarial_reprogramming.py [options]`
+
+Options:
+* `--model_indicator`: the indicator of the trained model (which is specified in training). Default: `test_hrs[10][10]`.
+* `--split`: the indicator of channel structures in each block. Default: `default`.
+* `--epochs`: the number of epochs to train (reprogram). Default: `50`.
+
+Outputs:
+The reprogramming training and testing accuracies will be printed.
 
