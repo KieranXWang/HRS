@@ -62,6 +62,23 @@ of the randomness of model structure, different runs may result in slightly
 different results.
 
 ## Defense against Adversarial Attack
+`python defense_adversarial_attack.py [options]`
+
+Options:
+* `--model_indicator`: the indicator of the trained model (which is specified in training).
+Default: `test_hrs[10][10]`.
+* `--split`: the indicator of channel structures in each block. Default: `default`.
+* `--dataset`: CIFAR or MNIST. Default: `CIFAR`.
+* `--test_examples`: number of test examples. Default:`10`.
+* `--attack`: FGSM, PGD or CWPGD. Default:`CWPGD`.
+* `--epsilon`: the L_inf bound of allowed adversarial perturbations. Default: `8/255`.
+* `--num_steps`: number of steps in generating adversarial examples, not work for FGSM. Default: `100`.
+* `--step_size`: the step size in generating adversarial examples. Default: `0.1`.
+* `--attack_setting`: normal or EOT. Default: `normal`.
+* `--gradient_samples`: number of gradient samples for calculating gradient expectation, only work when --attack_setting is set to EOT. Default: `10`.
+
+Outputs:
+Attack success rate (ASR) and averaged distortion will be printed.
 
 ## Defense against Adversarial Reprogramming
 

@@ -3,53 +3,19 @@ import keras
 import numpy as np
 import tensorflow as tf
 
-from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Activation, Flatten, InputLayer, Reshape, Conv2D, MaxPooling2D, concatenate
-
 from keras_utils import construct_hrs_model
 from project_utils import get_data
-
-'''
-block definition
-'''
-# block definitions
-def block_0():
-    channel = Sequential()
-    channel.add(Conv2D(64, (3, 3), input_shape=(32, 32, 3)))
-    channel.add(Activation('relu'))
-    channel.add(Conv2D(64, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(MaxPooling2D(pool_size=(2, 2)))
-    channel.add(Conv2D(128, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(Conv2D(128, (3, 3)))
-    channel.add(Activation('relu'))
-    channel.add(MaxPooling2D(pool_size=(2, 2)))
-    channel.add(Flatten())
-    channel.add(Dense(256))
-    channel.add(Activation('relu'))
-    channel.add(Dropout(0.7))
-
-    return channel
+from block_split_config import get_split
 
 
-def block_1():
-    channel = Sequential()
-    channel.add(Dense(256, input_shape=(256,)))
-    channel.add(Activation('relu'))
-    channel.add(Dense(10))
-
-    return channel
-
-
-generate_blocks = [block_0, block_1]
-
-
-def defend_adversarial_attack(dataset, model_indicator, attack, epsilon, test_samples, num_steps, step_size,
+def defend_adversarial_attack(dataset, split, model_indicator, attack, epsilon, test_samples, num_steps, step_size,
                               attack_setting, gradient_samples):
     # Create TF session and set as Keras backend session
     sess = tf.Session()
     keras.backend.set_session(sess)
+
+    # get block definitions
+    blocks_definition = get_split(split, dataset)
 
     # construct model
     keras.backend.set_learning_phase(0)
@@ -112,6 +78,7 @@ if __name__ == '__main__':
     parser =argparse.ArgumentParser()
     parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
+    parser.add_argument('--split', default='default', help='the indicator of channel structures in each block')
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')
     parser.add_argument('--test_examples', default=10, help='number of test examples')
     parser.add_argument('--attack', default='CWPGD', help='FGSM, PGD or CWPGD')
@@ -121,10 +88,12 @@ if __name__ == '__main__':
                                                          'for FGSM')
     parser.add_argument('--step_size', default=0.1, help='the step size in generating adversarial examples')
     parser.add_argument('--attack_setting', default='normal', help='normal or EOT')
-    parser.add_argument('--gradient_samples', default=10)
+    parser.add_argument('--gradient_samples', default=10, help='number of gradient samples for calculating gradient expectation.'
+                                                               ', only work when --attack_setting is set to EOT.')
 
     args = parser.parse_args()
     defend_adversarial_attack(dataset=args.dataset,
+                              split=args.split,
                               model_indicator=args.model_indicator,
                               attack=args.attack,
                               epsilon=args.epsilon,
