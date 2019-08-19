@@ -33,7 +33,10 @@ Options:
 the HRS structure and will be used as the locator for retrieving trained model
 weights. Format: `test_model[10][10]` for a two-block, 10 by 10 HRS model.
 Default: `test_hrs[10][10]`.
-* `--split`: the indicator of channel structures in each block. Default: `default`.
+* `--split`: the indicator of channel structures in each block.
+Default: `default`, in this splitting, all convolutional layers and the first
+fully-connected layer are grouped as the first block, the second fully-connected layer
+and the output layer are grouped as the second block.
 * `--train_schedule`: number of epochs for training each block. Default: `40 40`.
 * `--dataset`: CIFAR or MNIST. Default: `CIFAR`.
 
@@ -45,6 +48,18 @@ This can be done by adding options in `block_split_config.py` with unique indica
 return a list of functions that return Keras `Sequential` models for each block.
 
 ## Compute Test Accuracy
+`python test_acc.py [options]`
+
+Options:
+* `--model_indicator`: the indicator of the trained model (which is specified in training).
+Default: `test_hrs[10][10]`.
+* `--split`: the indicator of channel structures in each block. Default: `default`.
+* `--dataset`: CIFAR or MNIST. Default: `CIFAR`.
+
+Outputs:
+Test accuracy of the specified HRS model will be printed. Note: because
+of the randomness of model structure, different runs may result in slightly
+different results.
 
 ## Defense against Adversarial Attack
 
