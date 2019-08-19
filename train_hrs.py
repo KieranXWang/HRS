@@ -99,7 +99,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_indicator', default='test_hrs[10][10]', help='model indicator, format: model_name[5][5] for'
                                                                             'a HRS model with 5 by 5 channels')
-    parser.add_argument('--split', default='default', help='the structures of channels in each block')
+    parser.add_argument('--split', default='default', help='the indicator of channel structures in each block')
     parser.add_argument('--train_schedule', default=[40, 40], help='number of epochs for training each block', type=int,
                         nargs='*')
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')

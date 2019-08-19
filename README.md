@@ -29,9 +29,20 @@ This code is tested with `tensorflow 1.14.0`, `keras 2.2.4` and `numpy 1.16.4`.
 `python train_hrs.py [options]`
 
 Options:
-* `-- model_indicator`:
+* `-- model_indicator`: the indicator of the trained model, which indicates
+the HRS structure and will be used as the locator for retrieving trained model
+weights. Format: `test_model[10][10]` for a two-block, 10 by 10 HRS model.
+Default: `test_hrs[10][10]`.
+* `--split`: the indicator of channel structures in each block. Default: `default`.
+* `--train_schedule`: number of epochs for training each block. Default: `40 40`.
+* `--dataset`: CIFAR or MNIST. Default: `CIFAR`.
 
+Outputs:
+Trained weights of each channel will be saved in `./Model/`.
 
+### Customize Model Structure and Block Splitting
+This can be done by adding options in `block_split_config.py` with unique indicators. Note that `get_split` needs to
+return a list of functions that return Keras `Sequential` models for each block.
 
 ## Compute Test Accuracy
 
