@@ -19,8 +19,8 @@ def train_hrs(model_indicator, training_epoch, split='default', dataset='CIFAR')
     blocks_definition = get_split(split, dataset)
 
     # parse structure
-    STRUCTURE = [int(ss[:-1]) for ss in model_indicator.split('[')[1:]]
-    nb_block = len(STRUCTURE)
+    structure = [int(ss[:-1]) for ss in model_indicator.split('[')[1:]]
+    nb_block = len(structure)
 
     # make sure model_indicator, training_epoch and split all have the same number of blocks
     assert nb_block == len(training_epoch) == len(blocks_definition), "The number of blocks indicated by " \
@@ -28,7 +28,7 @@ def train_hrs(model_indicator, training_epoch, split='default', dataset='CIFAR')
                                                                       "be the same!"
 
     # create weights save dir
-    SAVE_DIR = './Model/%s_models/' % dataset + model_indicator + '/'
+    save_dir = './Model/%s_models/' % dataset + model_indicator + '/'
     try:
         os.makedirs('./Model/%s_models/' % dataset + model_indicator + '/')
     except: pass
@@ -37,11 +37,9 @@ def train_hrs(model_indicator, training_epoch, split='default', dataset='CIFAR')
     [X_train, X_test, Y_train, Y_test] = get_data(dataset=dataset, scale1=True, one_hot=True, percentage=1)
     img_rows, img_cols, img_channels = get_dimensions(dataset)
 
-
     # loss definition
     def fn(correct, predicted):
         return tf.nn.softmax_cross_entropy_with_logits(labels=correct, logits=predicted)
-
 
     '''
     Training HRS
@@ -62,14 +60,14 @@ def train_hrs(model_indicator, training_epoch, split='default', dataset='CIFAR')
             # build switching blocks
             block_input = model_input.output
             for i in range(block_idx):
-                weight_dir = SAVE_DIR + '%d_' % i + '%d'
-                block_output = construct_switching_block(block_input, STRUCTURE[i], blocks_definition[i], weight_dir)
+                weight_dir = save_dir + '%d_' % i + '%d'
+                block_output = construct_switching_block(block_input, structure[i], blocks_definition[i], weight_dir)
                 block_input = block_output
             trained_blocks_output = block_output
 
         # construct the part to train
         # normal blocks (with only one channel) from block_idx to the end
-        for channel_idx in range(STRUCTURE[block_idx]):
+        for channel_idx in range(structure[block_idx]):
             block_input = trained_blocks_output
             # the channel to train
             channel_to_train = blocks_definition[block_idx]()
@@ -91,7 +89,7 @@ def train_hrs(model_indicator, training_epoch, split='default', dataset='CIFAR')
                       nb_epoch=training_epoch[block_idx], shuffle=True)
 
             # save weights of this channel
-            channel_to_train.save_weights(SAVE_DIR + '%d_%d' % (block_idx, channel_idx))
+            channel_to_train.save_weights(save_dir + '%d_%d' % (block_idx, channel_idx))
 
         # after training all channels in this block, reset tf graph
         K.clear_session()
