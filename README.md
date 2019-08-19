@@ -6,6 +6,8 @@ order to protect the model from adversarial threats such as adversarial
 (mis-classification) attack and adversarial reprogramming. The
 figure below illustrates the structure of a HRS model.
 
+
+
 In the inference phase, the active channel that processes the input of
 each block is randomly assigned and ever-switching, leading to drastic but
 unpredictable changes to the active path (the chain of activate channels
@@ -17,7 +19,7 @@ appendices of the paper is .
 If you have any questions, feel free to contact Xiao Wang by email kxw@bu.edu.
 
 
-##Setting Up
+##Set Up
 This code requires `python 3` and the following packages: `tensorflow`,
 `keras`, `numpy`.
 
