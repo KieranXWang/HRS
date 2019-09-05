@@ -2,9 +2,6 @@ import numpy as np
 from keras.datasets import cifar10, mnist
 from keras.utils import np_utils
 
-from Model.CIFAR_model_utils import choose_defense_model as choose_cifar
-from Model.MNIST_model_utils import choose_defense_model as choose_mnist
-
 
 def load_cifar_data(one_hot=True, scale1=True):
     (X_train, Y_train), (X_test, Y_test) = cifar10.load_data()
