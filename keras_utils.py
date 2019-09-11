@@ -1,10 +1,47 @@
 import keras
 import os
+import tensorflow as tf
+
 from keras.models import Model, Sequential
 from keras.layers import InputLayer
+from keras.engine.topology import Layer
 
 from project_utils import get_dimensions
-from Model.CIFAR_model_utils import RandomMask
+
+
+class RandomMask(Layer):
+    def __init__(self, nb_channels, **kwargs):
+        self.nb_channels = nb_channels
+        self.mask = None
+        super().__init__(**kwargs)
+
+    def build(self, input_shape):
+        # the input_shape here should be a list
+        assert isinstance(input_shape, list), "the input shape of RandomMask layer should be a list"
+        shape = input_shape[0]
+
+        # build the random mask
+        if self.nb_channels == 1:
+            self.mask = tf.ones((1, ) + shape[1:])
+        else:
+            ones = tf.ones((1, ) + shape[1:])
+            zeros = tf.zeros((self.nb_channels - 1, ) + shape[1:])
+            mask = tf.concat([ones, zeros], 0)
+            self.mask = tf.random_shuffle(mask)
+            pass
+
+    def call(self, x):
+        # x should be a list
+        assert isinstance(x, list), "the input of RandomMask layer should be a list"
+        xs_expand = [tf.expand_dims(x_orig, axis=1) for x_orig in x]
+        x = tf.concat(xs_expand, 1)
+        x = x * self.mask
+        x = tf.reduce_sum(x, axis=1)
+        return x
+
+    def compute_output_shape(self, input_shape):
+        shape = input_shape[0]
+        return shape
 
 
 def construct_model_by_blocks(block_list):
