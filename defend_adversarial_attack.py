@@ -19,7 +19,7 @@ def defend_adversarial_attack(dataset, split, model_indicator, attack, epsilon, 
 
     # construct model
     keras.backend.set_learning_phase(0)
-    model = construct_hrs_model(dataset=dataset, model_indicator=model_indicator, blocks_definition=generate_blocks)
+    model = construct_hrs_model(dataset=dataset, model_indicator=model_indicator, blocks_definition=blocks_definition)
 
     # get data
     [X_train, X_test, Y_train, Y_test] = get_data(dataset=dataset, scale1=True, one_hot=False, percentage=0.01)
