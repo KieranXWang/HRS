@@ -1,5 +1,8 @@
 Hierarchical Random Switching
 =============================
+2019.09.23:
+It is more than welcome to test HRS against other adversarial evasion attacks and other types of adversarial threats. If you would like to have pretained HRS models to accelerate your research, we are happy to provide them and just contact me by sending emails to  kxw@bu.edu.
+
 Hierarchical Random Switching (HRS) is a stochastic defense technique which
 converts a deterministic base model structure to a stochastic model in
 order to protect the model from adversarial threats such as adversarial
@@ -13,7 +16,8 @@ each block is randomly assigned and ever-switching, leading to drastic but
 unpredictable changes to the active path (the chain of activate channels
 which has the same architecture as the base model).
 
-For more details, please refer to our paper at IJCAI 2019.
+For more details, please refer to our paper https://arxiv.org/abs/1908.07116#. Cite our paper using:
+
 
 If you have any questions, feel free to contact Xiao Wang by email kxw@bu.edu.
 
