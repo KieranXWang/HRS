@@ -16,7 +16,16 @@ each block is randomly assigned and ever-switching, leading to drastic but
 unpredictable changes to the active path (the chain of activate channels
 which has the same architecture as the base model).
 
-For more details, please refer to our paper https://arxiv.org/abs/1908.07116#. 
+For more details, please refer to our paper https://arxiv.org/abs/1908.07116#. And cite our paper using:
+`
+@article{Wang2019ProtectingNN,
+  title={Protecting Neural Networks with Hierarchical Random Switching: Towards Better Robustness-Accuracy Trade-off for Stochastic Defenses},
+  author={Xiao Wang and Siyue Wang and Pin-Yu Chen and Yanzhi Wang and Brian Kulis and Xue Lin and Sang Peter Chin},
+  journal={ArXiv},
+  year={2019},
+  volume={abs/1908.07116}
+}
+`
 
 
 If you have any questions, feel free to contact Xiao Wang by email kxw@bu.edu.
