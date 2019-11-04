@@ -115,7 +115,7 @@ def construct_hrs_model(dataset, model_indicator, blocks_definition, load_weight
     assert len(structure) == len(blocks_definition), 'arg structure and block_definition need to have the same length'
 
     # assert weights exist
-    weights_dir = './Model/%s_Models/%s' % (dataset, model_indicator)
+    weights_dir = './Model/%s_models/%s' % (dataset, model_indicator)
     assert os.path.exists(weights_dir), '%s does not exist' % weights_dir
 
     # input

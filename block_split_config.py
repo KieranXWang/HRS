@@ -1,5 +1,5 @@
 from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Activation, Flatten, InputLayer, Reshape, Conv2D, MaxPooling2D, concatenate
+from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
 
 def get_split(indicator, dataset):
