@@ -33,7 +33,7 @@ def test_acc(model_indicator, split, dataset):
 
     acc = np.mean(np.array(score))
 
-    print('Test Acc. of Model: %s is %.2f' % (model_indicator, acc))
+    print('Test Acc. of Model: %s is %.4f' % (model_indicator, acc))
     return acc
 
 
