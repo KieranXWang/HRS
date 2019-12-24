@@ -39,7 +39,7 @@ def get_split(indicator, dataset):
             # block definitions
             def block_0():
                 channel = Sequential()
-                channel.add(Conv2D(32, (3, 3), input_shape=(32, 32, 3)))
+                channel.add(Conv2D(32, (3, 3), input_shape=(28, 28, 1)))
                 channel.add(Activation('relu'))
                 channel.add(Conv2D(32, (3, 3)))
                 channel.add(Activation('relu'))

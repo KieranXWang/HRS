@@ -82,7 +82,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', default='CIFAR', help='CIFAR or MNIST')
     parser.add_argument('--test_examples', default=10, help='number of test examples')
     parser.add_argument('--attack', default='CWPGD', help='FGSM, PGD or CWPGD')
-    parser.add_argument('--epsilon', default=8/255, help='the L_inf bound of allowed adversarial perturbations',
+    parser.add_argument('--epsilon', default=8, help='the L_inf bound of allowed adversarial perturbations, 8 means 8/255',
                         type=float)
     parser.add_argument('--num_steps', default=100, help='number of steps in generating adversarial examples, not work '
                                                          'for FGSM')
