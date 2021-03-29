@@ -1,7 +1,9 @@
 Hierarchical Random Switching
 =============================
 2021.03.28:
-I am sharing tow pre-trained HRS for Cifar-10. 
+I am sharing tow pre-trained HRS for Cifar-10:
+* 3 X 3 channels: https://www.dropbox.com/s/6xcfqqtfs254vj7/test_hrs%5B3%5D%5B3%5D.zip?dl=0
+* 10 X 3 channels: https://www.dropbox.com/s/50mbu9iddbc8t7e/test_hrs%5B10%5D%5B10%5D.zip?dl=0
 
 2019.09.23:
 It is more than welcome to test HRS against other adversarial evasion attacks and other types of adversarial threats. If you would like to have pretained HRS models to accelerate your research, we are happy to provide them and just contact me by sending emails to  kxw@bu.edu.
